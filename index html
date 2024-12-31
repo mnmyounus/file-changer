@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Extension Changer | Y</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ddd;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        select, input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+        }
+        button {
+            cursor: pointer;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>File Extension Changer</h1>
+<p>Y</p>
+        <input type="file" id="fileInput" />
+        <br />
+        <select id="extensionDropdown">
+            <optgroup label="Documents">
+                <option value=".txt">.txt (Text File)</option>
+                <option value=".docx">.docx (Word Document)</option>
+                <option value=".pdf">.pdf (PDF Document)</option>
+                <option value=".csv">.csv (CSV File)</option>
+                <option value=".xlsx">.xlsx (Excel Spreadsheet)</option>
+                <option value=".pptx">.pptx (PowerPoint Presentation)</option>
+            </optgroup>
+            <optgroup label="Images">
+                <option value=".jpg">.jpg (JPEG Image)</option>
+                <option value=".png">.png (PNG Image)</option>
+                <option value=".gif">.gif (GIF Image)</option>
+                <option value=".bmp">.bmp (Bitmap Image)</option>
+                <option value=".svg">.svg (Scalable Vector Graphics)</option>
+            </optgroup>
+            <optgroup label="Videos">
+                <option value=".mp4">.mp4 (MP4 Video)</option>
+                <option value=".avi">.avi (AVI Video)</option>
+                <option value=".mkv">.mkv (MKV Video)</option>
+                <option value=".mov">.mov (MOV Video)</option>
+                <option value=".wmv">.wmv (WMV Video)</option>
+            </optgroup>
+            <optgroup label="Audio">
+                <option value=".mp3">.mp3 (MP3 Audio)</option>
+                <option value=".wav">.wav (WAV Audio)</option>
+                <option value=".aac">.aac (AAC Audio)</option>
+                <option value=".flac">.flac (FLAC Audio)</option>
+                <option value=".ogg">.ogg (OGG Audio)</option>
+            </optgroup>
+            <optgroup label="Archives">
+                <option value=".zip">.zip (ZIP Archive)</option>
+                <option value=".rar">.rar (RAR Archive)</option>
+                <option value=".7z">.7z (7-Zip Archive)</option>
+                <option value=".tar">.tar (TAR Archive)</option>
+                <option value=".gz">.gz (Gzip Archive)</option>
+            </optgroup>
+            <optgroup label="Others">
+                <option value=".json">.json (JSON File)</option>
+                <option value=".xml">.xml (XML File)</option>
+                <option value=".html">.html (HTML File)</option>
+                <option value=".css">.css (CSS File)</option>
+                <option value=".js">.js (JavaScript File)</option>
+            </optgroup>
+        </select>
+        <br />
+        <button id="changeButton">Change Extension</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        document.getElementById('changeButton').addEventListener('click', () => {
+            const fileInput = document.getElementById('fileInput').files[0];
+            const newExtension = document.getElementById('extensionDropdown').value;
+            const message = document.getElementById('message');
+
+            if (!fileInput) {
+                message.textContent = "Please select a file.";
+                return;
+            }
+
+            const oldName = fileInput.name;
+            const newName = oldName.replace(/\.[^/.]+$/, "") + newExtension;
+
+            const blob = new Blob([fileInput], { type: fileInput.type });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = newName;
+            link.click();
+
+            message.textContent = `File extension changed to ${newExtension}.`;
+        });
+    </script>
+</body>
+</html>
