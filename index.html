@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced File Extension Changer | Y</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f4f4f9;
+            color: #000;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ddd;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            transition: background 0.3s, color 0.3s;
+        }
+        select, input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+        }
+        button {
+            cursor: pointer;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #fileDetails {
+            text-align: left;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        #darkModeToggle {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        body.dark {
+            background: #121212;
+            color: #fff;
+        }
+        body.dark .container {
+            background: #1e1e1e;
+            color: #fff;
+            border-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced File Extension Changer From Y</h1>
+        <input type="file" id="fileInput" multiple />
+        <div id="dropZone" style="border: 2px dashed #aaa; padding: 20px; margin-top: 10px;">
+            Drag & Drop Files Here
+        </div>
+        <br />
+        <select id="extensionDropdown">
+            <option value=".txt">.txt (Text File)</option>
+            <option value=".jpg">.jpg (JPEG Image)</option>
+            <option value=".png">.png (PNG Image)</option>
+            <option value=".pdf">.pdf (PDF Document)</option>
+        </select>
+        <input type="text" id="customExtension" placeholder="Add custom extension (e.g., .html)" />
+        <button id="addExtension">Add Extension</button>
+        <br />
+        <button id="changeButton">Change Extension</button>
+        <p id="message"></p>
+        <div id="fileDetails"></div>
+        <button id="darkModeToggle">Toggle Dark Mode</button>
+    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const extensionDropdown = document.getElementById('extensionDropdown');
+        const customExtension = document.getElementById('customExtension');
+        const addExtensionButton = document.getElementById('addExtension');
+        const changeButton = document.getElementById('changeButton');
+        const message = document.getElementById('message');
+        const fileDetails = document.getElementById('fileDetails');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const dropZone = document.getElementById('dropZone');
+
+        // Preview file details
+        fileInput.addEventListener('change', () => {
+            showFileDetails(fileInput.files);
+        });
+
+        // Drag-and-drop functionality
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.style.background = '#ddd';
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.background = '';
+        });
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.style.background = '';
+            fileInput.files = event.dataTransfer.files;
+            showFileDetails(fileInput.files);
+        });
+
+        // Add custom extension to dropdown
+        addExtensionButton.addEventListener('click', () => {
+            const newExtension = customExtension.value.trim();
+            if (newExtension && !newExtension.startsWith(".")) {
+                alert("Extensions must start with a dot (e.g., .html).");
+                return;
+            }
+            const option = document.createElement('option');
+            option.value = newExtension;
+            option.textContent = newExtension + " (Custom)";
+            extensionDropdown.appendChild(option);
+            extensionDropdown.value = newExtension; // Select the newly added option
+            customExtension.value = '';
+        });
+
+        // Change extension for all files
+        changeButton.addEventListener('click', () => {
+            const selectedFiles = fileInput.files;
+            const newExtension = extensionDropdown.value;
+            if (selectedFiles.length === 0) {
+                message.textContent = "Please select or drop files.";
+                return;
+            }
+            Array.from(selectedFiles).forEach((file) => {
+                const oldName = file.name;
+                const newName = oldName.replace(/\.[^/.]+$/, "") + newExtension;
+                const blob = new Blob([file], { type: file.type });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = newName;
+                link.click();
+            });
+            message.textContent = `Files successfully renamed to ${newExtension}.`;
+        });
+
+        // Show file details
+        function showFileDetails(files) {
+            fileDetails.innerHTML = '';
+            Array.from(files).forEach((file) => {
+                fileDetails.innerHTML += `<p>Name: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || "Unknown"}</p>`;
+            });
+        }
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
+    </script>
+</body>
+</html>
