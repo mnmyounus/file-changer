@@ -26,7 +26,7 @@
             width: 400px;
             transition: background 0.3s, color 0.3s;
         }
-        select, input, button {
+        select, input, button, textarea {
             margin: 10px;
             padding: 10px;
             font-size: 16px;
@@ -82,8 +82,18 @@
         <button id="changeButton">Change Extension</button>
         <p id="message"></p>
         <div id="fileDetails"></div>
+
+        <hr>
+        <!-- Type Text Section -->
+        <h2>Type Your Text and Download</h2>
+        <input type="text" id="customTextExtension" placeholder="Choose an extension (e.g., .txt)" />
+        <textarea id="textAreaInput" placeholder="Type your text here..." rows="6" style="width: 100%; margin-top: 10px;"></textarea>
+        <button id="downloadTextButton">Download Text as File</button>
+        <p id="textMessage"></p>
+
         <button id="darkModeToggle">Toggle Dark Mode</button>
     </div>
+
     <script>
         const fileInput = document.getElementById('fileInput');
         const extensionDropdown = document.getElementById('extensionDropdown');
@@ -94,8 +104,43 @@
         const fileDetails = document.getElementById('fileDetails');
         const darkModeToggle = document.getElementById('darkModeToggle');
         const dropZone = document.getElementById('dropZone');
+        
+        const textAreaInput = document.getElementById('textAreaInput');
+        const customTextExtension = document.getElementById('customTextExtension');
+        const downloadTextButton = document.getElementById('downloadTextButton');
+        const textMessage = document.getElementById('textMessage');
 
-        // Preview file details
+        // Show file details
+        function showFileDetails(files) {
+            fileDetails.innerHTML = '';
+            Array.from(files).forEach((file) => {
+                const fileType = file.type.split('/')[0];  // Get the file type (image, text, etc.)
+                let fileInfo = `<p>Name: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || "Unknown"}</p>`;
+                
+                // Image Preview
+                if (fileType === 'image') {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imgPreview = `<img src="${event.target.result}" style="max-width: 200px; margin-top: 10px;" />`;
+                        fileDetails.innerHTML += fileInfo + imgPreview;
+                    };
+                    reader.readAsDataURL(file);  // Read image file and show preview
+                }
+                // Text File Preview
+                else if (fileType === 'text') {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const textPreview = `<pre style="white-space: pre-wrap; max-width: 200px; margin-top: 10px;">${event.target.result}</pre>`;
+                        fileDetails.innerHTML += fileInfo + textPreview;
+                    };
+                    reader.readAsText(file);  // Read text file and show content
+                } else {
+                    fileDetails.innerHTML += fileInfo;
+                }
+            });
+        }
+
+        // File input change event
         fileInput.addEventListener('change', () => {
             showFileDetails(fileInput.files);
         });
@@ -150,13 +195,24 @@
             message.textContent = `Files successfully renamed to ${newExtension}.`;
         });
 
-        // Show file details
-        function showFileDetails(files) {
-            fileDetails.innerHTML = '';
-            Array.from(files).forEach((file) => {
-                fileDetails.innerHTML += `<p>Name: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB | Type: ${file.type || "Unknown"}</p>`;
-            });
-        }
+        // Handle text input and download button
+        downloadTextButton.addEventListener('click', () => {
+            const textContent = textAreaInput.value.trim();
+            const fileExtension = customTextExtension.value.trim();
+
+            if (!fileExtension || !fileExtension.startsWith('.')) {
+                alert('Please provide a valid extension starting with a dot (e.g., .txt)');
+                return;
+            }
+
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `typedText${fileExtension}`;
+            link.click();
+
+            textMessage.textContent = `File successfully downloaded with ${fileExtension} extension.`;
+        });
 
         // Toggle dark mode
         darkModeToggle.addEventListener('click', () => {
@@ -164,4 +220,5 @@
         });
     </script>
 </body>
-</html>
+    </html>
+    
